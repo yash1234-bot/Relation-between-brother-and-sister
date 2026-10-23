@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fridge Ki Chori - Ek Bhai-Behen Dastaan</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            color: #f8fafc;
+        }
+
+        /* dark overlay on top of the bg photo so text is readable */
+        body {
+            background: linear-gradient(rgba(19, 17, 28, 0.8), rgba(15, 13, 24, 0.88)),
+                url('https://img.magnific.com/premium-photo/kids-are-kissing-with-hearts-their-arms-style-colorful-watercolors_921860-218892.jpg?semt=ais_hybrid&w=740&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* ---------- top bar ---------- */
+        .top-bar {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(20, 18, 30, 0.82);
+            backdrop-filter: blur(12px);
+            padding: 8px 22px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            gap: 14px;
+            font-size: 0.9rem;
+        }
+
+        .top-bar span {
+            color: #f472b6;
+            font-weight: 600;
+        }
+
+        /* ---------- side dots ---------- */
+        .dots {
+            position: fixed;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dots a {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dots a.active {
+            background: #ec4899;
+            color: white;
+            border-color: white;
+        }
+
+        /* ---------- scrolling part ---------- */
+        #story {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .scene {
+            min-height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 75px 15px 30px;
+        }
+
+        .card {
+            background: rgba(22, 19, 32, 0.82);
+            backdrop-filter: blur(14px);
+            padding: 32px 28px;
+            border-radius: 24px;
+            max-width: 540px;
+            width: 100%;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* different border colours for the special chapters */
+        .red { border-color: #f87171; }
+        .gold { border-color: #fbbf24; }
+        .pink { border-color: #f472b6; }
+        .blue { border-color: #38bdf8; }
+
+        .tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            margin-bottom: 10px;
+        }
+
+        .red .tag { background: #dc2626; }
+        .gold .tag { background: #d97706; }
+        .pink .tag { background: #db2777; }
+        .blue .tag { background: #0284c7; }
+
+        .emoji {
+            font-size: 3.2rem;
+            margin: 8px 0;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        .hand {
+            font-family: 'Caveat', cursive;
+            font-size: 1.7rem;
+            color: #fde047;
+        }
+
+        .card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 10px 0 14px;
+        }
+
+        /* click items in chapter 2 */
+        .loot {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 14px 0;
+        }
+
+        .loot div {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .quote {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 4px solid #fde047;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin: 12px 0;
+            text-align: left;
+            color: #fef9c3;
+        }
+
+        .quote.pinkq {
+            border-left-color: #f472b6;
+            background: rgba(236, 72, 153, 0.15);
+            color: #fce7f3;
+        }
+
+        .quote.blueq {
+            border-left-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.15);
+            color: #e0f2fe;
+        }
+
+        .rules {
+            text-align: left;
+            border: 1px dashed #fbbf24;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 12px 0;
+        }
+
+        .rules label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            font-size: 0.96rem;
+        }
+
+        .rules input {
+            accent-color: #f59e0b;
+        }
+
+        .gifts {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .gifts div {
+            border: 1px solid rgba(244, 114, 182, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fbcfe8;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .note-box {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        #reply {
+            display: none;
+            margin-top: 8px;
+            padding: 10px;
+            border: 1px solid #4ade80;
+            background: rgba(34, 197, 94, 0.18);
+            color: #bbf7d0;
+            border-radius: 10px;
+            font-size: 0.92rem;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 22px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            font-size: 0.92rem;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #ec4899;
+            border-color: #ec4899;
+        }
+
+        .credit {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>🍫 Fridge Ki Chori</span>
+        <small id="chapterText">Chapter 1 of 9</small>
+    </div>
+
+    <div class="dots">
+        <a href="#ch1" class="active">1</a>
+        <a href="#ch2">2</a>
+        <a href="#ch3">3</a>
+        <a href="#ch4">4</a>
+        <a href="#ch5">5</a>
+        <a href="#ch6">6</a>
+        <a href="#ch7">7</a>
+        <a href="#ch8">8</a>
+        <a href="#ch9">9</a>
+    </div>
+
+    <div id="story">
+
+        <!-- chapter 1 -->
+        <section class="scene" id="ch1" data-title="Chapter 1 of 9">
+            <div class="card">
+                <span class="tag">Chapter 1 • Raat Ke 1:30 Baje 🌙</span>
+                <div class="emoji">🥷🔦</div>
+                <h1>Mission: Midnight Fridge</h1>
+                <img src="https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=600&q=80" alt="Late night kitchen">
+                <p>Ghar mein poora sannata hai. Sab so rahe hain. Par meri aankhein khuli hain... kyunki fridge ke top shelf mein rakhi Didi ki <strong>Special Chocolate aur Boba Drink</strong> mujhe bula rahi hai!</p>
+                <p class="hand">"Dabe paanv chalo... farsh bilkul aawaz nahi karna chahiye!"</p>
+                <a href="#ch2" class="btn">Kitchen Mein Ghusein 👇</a>
+            </div>
+        </section>
+
+        <!-- chapter 2 -->
+        <section class="scene" id="ch2" data-title="Chapter 2 of 9">
+            <div class="card">
+                <span class="tag">Chapter 2 • Raat Ke 1:34 Baje ❄️</span>
+                <div class="emoji">🚪✨</div>
+                <h1>Khazane Ka Darwaza Khula!</h1>
+                <p>Bina aawaz kiye maine fridge khola. Thandi roshni mein dono cheezein chamak rahi thi (click karke check karein):</p>
+
+                <div class="loot">
+                    <div onclick="this.innerHTML = '✅ Pocket Mein Rakhi!'">🍫 Silk Chocolate</div>
+                    <div onclick="this.innerHTML = '✅ Straw Laga Liya!'">🧋 Brown Sugar Boba</div>
+                </div>
+
+                <p>Ab bas bina pakde gaye wapas kamre mein pahuchna hai!</p>
+                <a href="#ch3" class="btn">Pehla Bite Lein 👇</a>
+            </div>
+        </section>
+
+        <!-- chapter 3 -->
+        <section class="scene" id="ch3" data-title="Chapter 3 of 9">
+            <div class="card">
+                <span class="tag">Chapter 3 • Raat Ke 1:36 Baje 😋</span>
+                <div class="emoji">🍫🤤</div>
+                <h1>The "Perfect" Crime!</h1>
+                <img src="https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=600&q=80" alt="Chocolate bar">
+                <p>Saboot mitane ke liye maine wrapper ko dustbin ke sabse neeche dabaya, aur jaise hi pehla bite liya... <em>Swarg!</em></p>
+                <p class="hand">"Sach mein, chori ki chocolate ka taste 10 guna zyada meetha hota hai!"</p>
+                <a href="#ch4" class="btn">Wapas Kamre Mein Bhaagein 👇</a>
+            </div>
+        </section>
+
+        <!-- chapter 4 -->
+        <section class="scene" id="ch4" data-title="Chapter 4 of 9">
+            <div class="card red">
+                <span class="tag">Chapter 4 • 1:37 AM 🚨 PAKDE GAYE!</span>
+                <div class="emoji">📸😱</div>
+                <h1>Red-Handed Arrest!</h1>
+                <p>Jaise hi main peeche muda— <strong>*CLICK!*</strong> Kitchen ki tubelight on hui! Saamne Didi haath baandhe khadi thi, aur unke phone mein meri chocolate khate hue photo click ho chuki thi!</p>
+                <div class="quote">
+                    "Haan bhai chor babu... Amma ko subah yeh photo dikhaun, ya meri shartein maanega?" 😈
+                </div>
+                <a href="#ch5" class="btn">Shartein Sunein 👇</a>
+            </div>
+        </section>
+
+        <!-- chapter 5 -->
+        <section class="scene" id="ch5" data-title="Chapter 5 of 9">
+            <div class="card gold">
+                <span class="tag">Chapter 5 • The Contract 📜</span>
+                <div class="emoji">✍️⚖️</div>
+                <h1>Blackmail Agreement</h1>
+                <p>Photo delete karwane ke badle mujhe raat ke 2 baje yeh khatarnak deal accept karni padi:</p>
+
+                <div class="rules">
+                    <label><input type="checkbox" checked> Pure hafte fridge ki paani ki bottles main bharunga.</label>
+                    <label><input type="checkbox" checked> AC ke remote aur TV par Didi ka raaj chalega.</label>
+                    <label><input type="checkbox" checked> Din mein 5 baar bina munh banaye kaam karna padega.</label>
+                </div>
+
+                <a href="#ch6" class="btn">Agla Din Dekhein 👇</a>
+            </div>
+        </section>
+
+        <!-- chapter 6 -->
+        <section class="scene" id="ch6" data-title="Chapter 6 of 9">
+            <div class="card">
+                <span class="tag">Chapter 6 • Agla Din 🧹</span>
+                <div class="emoji">🏃‍♂️💨</div>
+                <h1>24 Ghante Ki Gulami!</h1>
+                <p>Subah hote hi Didi maharani ki tarah sofe par baith gayi aur hukum chalne shuru ho gaye:</p>
+                <div class="quote">
+                    "Oye Yash! Ek gilaas thanda paani lana... aur haan, mera phone bhi charger par laga de!" 👑
+                </div>
+                <p>₹100 ki chocolate mujhe ₹10,000 ki mehngi pad gayi!</p>
+                <a href="#ch7" class="btn">Shaam Ka Scene 👇</a>
+            </div>
+        </section>
+
+        <!-- chapter 7 -->
+        <section class="scene" id="ch7" data-title="Chapter 7 of 9">
+            <div class="card">
+                <span class="tag">Chapter 7 • Shaam 7:30 Baje 😔</span>
+                <div class="emoji">💻📚</div>
+                <h1>Jab Mood Off Tha...</h1>
+                <p>Agle din shaam ko college ke lambe lectures, C programming ke bugs, aur dher saari lab files likhte-likhte mera sar dard ho raha tha.</p>
+                <p>Main chupchap apni study table par sar rakh kar thaka hua baitha tha. Aaj toh ladaai karne ki bhi himmat nahi bachi thi.</p>
+                <a href="#ch8" class="btn">Aakhiri Chapter 👇</a>
+            </div>
+        </section>
+
+        <!-- chapter 8 -->
+        <section class="scene" id="ch8" data-title="Chapter 8 of 9">
+            <div class="card pink">
+                <span class="tag">Chapter 8 • The Wholesome Finale ❤️</span>
+                <div class="emoji">🧋🍫🥰</div>
+                <h1>Bina Bole Wala Pyaar!</h1>
+
+                <p>Achanak kamre ka darwaza khula. Didi andar aayi, aur bina ek shabd bole meri table par peace offering rakh kar chali gayi:</p>
+
+                <div class="gifts">
+                    <div>🍫 2x Extra Silk Chocolates</div>
+                    <div>🧋 1x Chilled Boba Tea</div>
+                </div>
+
+                <div class="quote pinkq">
+                    "Chupchap kha le aur apni lab file poori kar... aur haan, zyada udd mat!" ❤️
+                </div>
+
+                <div class="note-box">
+                    <p style="font-size: 0.92rem;">Upar se full blackmail, par andar se sabse bada support!</p>
+                    <button class="btn" onclick="showNote()">💌 Didi Ke Liye Thank You Note Kholein</button>
+
+                    <div id="reply">
+                        <strong>Note Unlocked:</strong> "Thank you Didi! Next time fridge se chori nahi seedha maangunga! 😂❤️"
+                    </div>
+                </div>
+
+                <a href="#ch9" class="btn">Next: Thank You Page ➡️</a>
+            </div>
+        </section>
+
+        <!-- chapter 9 -->
+        <section class="scene" id="ch9" data-title="Thank You • Chapter 9 of 9">
+            <div class="card blue">
+                <span class="tag">The End • Thank You Page ✨</span>
+                <div class="emoji">💌🤝❤️</div>
+                <h1>A Heartfelt Thank You!</h1>
+                <p>Thank you so much for taking the time to read through this little slice of sibling life. Whether you are reviewing this project for Boba Bash or just visiting, your time means the world!</p>
+
+                <div class="quote blueq">
+                    "Behind every late-night coding session and lost chocolate, family is always cheering you on quietly." ❤️
+                </div>
+
+                <p class="hand">- Yash Mishra 🧋</p>
+
+                <a href="#ch1" class="btn">🔄 Start From Beginning</a>
+                <p class="credit">Made with ❤️ for Boba Bash 🧋</p>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        var story = document.getElementById('story');
+        var scenes = document.querySelectorAll('.scene');
+        var dots = document.querySelectorAll('.dots a');
+        var chapterText = document.getElementById('chapterText');
+
+        function showNote() {
+            document.getElementById('reply').style.display = 'block';
+        }
+
+        // find which chapter is on screen and update the bar + dots
+        story.addEventListener('scroll', function () {
+            var current = 0;
+
+            for (var i = 0; i < scenes.length; i++) {
+                if (story.scrollTop >= scenes[i].offsetTop - window.innerHeight / 2) {
+                    current = i;
+                }
+            }
+
+            chapterText.innerText = scenes[current].dataset.title;
+
+            for (var j = 0; j < dots.length; j++) {
+                dots[j].classList.remove('active');
+            }
+            dots[current].classList.add('active');
+        });
+    </script>
+</body>
+</html>
